@@ -12,6 +12,10 @@ import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
 import userManageRouter from './modules/user-manage'
+
+import advertiseRouter from './modules/advertise'
+import articleRouter from './modules/article'
+
 import settingRouter from './modules/setting'
 
 /**
@@ -41,8 +45,10 @@ import settingRouter from './modules/setting'
  * all roles can be accessed
  */
 export const constantRoutes = [
+  articleRouter,
   userManageRouter,
   settingRouter,
+  advertiseRouter,
   {
     path: '/redirect',
     component: Layout,

@@ -51,7 +51,8 @@ const tableRouter = {
       path: 'article-second-type',
       component: () => import('@/views/setting/article-second-type'),
       name: 'ArticleSecondtype',
-      meta: { title: '二级类型管理' }
+      meta: { title: '二级类型管理' },
+      hidden: true
     }
   ]
 }
