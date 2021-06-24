@@ -29,6 +29,13 @@ export default {
       method: 'post',
       data: params
     })
+  },
+  getAllAdvertise(params) {
+    return request({
+      url: process.env.VUE_APP_API_PREFIX + '/advertise/all',
+      method: 'post',
+      data: params
+    })
   }
 
 }

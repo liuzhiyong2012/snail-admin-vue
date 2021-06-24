@@ -8,6 +8,24 @@
             <el-option v-for="(item, index) in positionList" :key="index" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
+
+        <el-form-item label="封面图">
+          <el-upload
+            class="avatar-uploader"
+            :action="imgUploadUrl"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :on-remove="handleRemove"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img v-if="postForm.imageUrl" :src="postForm.imageUrl|addBaseUrl" class="avatar">
+            <span v-if="postForm.imageUrl" class="el-upload-action" @click.stop="handleRemove()">
+              <i class="el-icon-delete" />
+            </span>
+            <i v-else class="el-icon-upload2 avatar-uploader-icon" stop />
+          </el-upload>
+        </el-form-item>
+
         <el-form-item label="生效时间" required>
           <el-date-picker v-model="postForm.startTime" type="datetime" format="yyyy-MM-dd HH:mm" value-format="yyyy-MM-dd HH:mm:ss" placeholder="开始时间" style="width:200px" />
 
@@ -34,7 +52,7 @@
           <el-col :span="20">
             <span v-if="!postForm.articleId" class="select-btn" @click="openArticleModal()">点击此处选择需要关联的用户贴子</span>
 
-            <span v-if="postForm.articleId" class="select-btn"><<{{ postForm.articleId }}>></span>
+            <span v-if="postForm.articleId" class="select-btn"><<{{ articleTitle||postForm.articleId }}>></span>
 
             <span v-if="postForm.articleId" class="select-btn" @click="openArticleModal()">重新选择</span>
 
@@ -51,11 +69,10 @@
         </div>
         <el-form-item>
           <el-button type="primary" @click="submitForm('postForm')">{{ operTxt[opertype] }}</el-button>
-          <!-- <el-button @click="resetForm('postForm')">重置</el-button> -->
         </el-form-item>
       </el-form>
     </div>
-    <article-select-modal :is-showed="showArticleSelectModal" @confirm="articleSelect" @cancle="articleCancel" />
+    <article-select-modal :isshowed="showArticleSelectModal" @confirm="articleSelect" @cancle="articleCancel" />
   </section>
 </template>
 
@@ -71,10 +88,9 @@ export default {
   },
   data() {
     return {
-
+      imgUploadUrl: 'http://127.0.0.1:9080/common/upload',
       statusList: [{ name: '启用', value: '1' }, { name: '冻结', value: '2' }],
-
-      opertype: 'add', // 'add'||'edit'
+      opertype: 'add',
       operTxt: {
         'add': '新增',
         'edit': '修改'
@@ -92,6 +108,7 @@ export default {
         linkUrl: '',
         status: '1'
       },
+      articleTitle: '',
       rules: {
         name: [{ required: true, message: '请输入广告名', trigger: 'blur' }, { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }],
         startTime: [{ required: true, message: '请输入开始时间', trigger: 'blur' }],
@@ -114,7 +131,8 @@ export default {
         articleId: '',
         content: '',
         linkUrl: '',
-        status: '1'
+        status: '1',
+        imageUrl: ''
       }
     } else {
       // 根据广告id获取
@@ -133,7 +151,8 @@ export default {
           articleId: item.articleId,
           content: item.content,
           linkUrl: item.linkUrl,
-          status: item.status
+          status: item.status,
+          imageUrl: item.imageUrl
         }
       })
     }
@@ -141,6 +160,26 @@ export default {
     this.getPositionList()
   },
   methods: {
+    handleRemove() {
+      this.postForm.imageUrl = ''
+    },
+    // 上传成功回调
+    handleAvatarSuccess(res, file) {
+      // debugger
+      this.postForm.imageUrl = res.datas.fileId
+    },
+    // 上传前格式和图片大小限制
+    beforeAvatarUpload(file) {
+      const type = file.type === 'image/jpeg' || 'image/jpg' || 'image/webp' || 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!type) {
+        this.$message.error('图片格式不正确!(只能包含jpg，png，webp，JPEG)')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!')
+      }
+      return type && isLt2M
+    },
     getPositionList() {
       TypeApi.getType({
         parentId: '1406277910093938689',
@@ -150,8 +189,9 @@ export default {
         this.positionList = res.datas
       })
     },
-    articleSelect(articleId) {
-      this.postForm.articleId = articleId
+    articleSelect(article) {
+      this.postForm.articleId = article.id
+      this.articleTitle = article.title
       this.showArticleSelectModal = false
     },
     articleCancel() {
@@ -200,7 +240,6 @@ export default {
       this.$refs[formName].resetFields()
     },
     openArticleModal() {
-      // debugger
       this.showArticleSelectModal = true
     }
   }
@@ -219,5 +258,55 @@ export default {
       color: rgb(24, 144, 255);
     }
   }
+}
+
+.avatar-uploader{
+ width: 240PX;
+  // height: 120px;
+  /* border-radius: 50%; */
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  // background: url('../assets/img/defaultHead.jpg') no-repeat;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: rgba(0, 0, 0, .3);
+}
+.avatar-uploader-icon{
+  font-size: 0;
+  color: #fff;
+  width: 240px;
+  height: 240px;
+  line-height: 240px;
+  text-align: center;
+}
+.avatar-uploader-icon:hover{
+  font-size: 28px;
+  background-color: rgba(0, 0, 0, .3);
+}
+.avatar {
+  position: relative;
+ width: 240px;
+  height: 240px;
+  display: block;
+}
+.el-upload-action {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  font-size: 0;
+  color: #fff;
+  text-align: center;
+  line-height: 120px;
+
+}
+.el-upload-action:hover {
+  font-size: 20px;
+  background-color: #000;
+  background-color: rgba(0, 0, 0, .3)
 }
 </style>

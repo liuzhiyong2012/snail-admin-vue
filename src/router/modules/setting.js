@@ -17,6 +17,12 @@ const tableRouter = {
     icon: 'table'
   },
   children: [
+	  {
+	    path: 'websetting',
+	    component: () => import('@/views/setting/websetting'),
+	    name: 'Websetting',
+	    meta: { title: '网站设置' }
+	  },
     {
       path: 'platform',
       component: () => import('@/views/setting/platform'),
@@ -53,6 +59,13 @@ const tableRouter = {
       name: 'ArticleSecondtype',
       meta: { title: '二级类型管理' },
       hidden: true
+    },
+    {
+      path: 'jobs',
+      component: () => import('@/views/setting/jobs'),
+      name: 'jobs',
+      meta: { title: '定时任务' }
+
     }
   ]
 }

@@ -26,6 +26,11 @@
 
     </div>
     <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;">
+      <el-table-column label="封面图" prop="imageUrl" align="center">
+        <template slot-scope="{ row }">
+          <img :src="row.imageUrl|addBaseUrl" alt="" style="max-width: 200px;max-height: 100px;">
+        </template>
+      </el-table-column>
       <el-table-column label="标题" prop="title" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.title||'--' }}</span>
@@ -87,8 +92,8 @@ export default {
   filters: {
     typeFilter(roleType) {
       const roleTypeMap = {
-        '1': '关联贴子',
-        '2': '自定义',
+        '1': '富文本',
+        '2': '关联用户贴子',
         '3': '外部链接'
       }
       return roleTypeMap[roleType]
@@ -123,7 +128,7 @@ export default {
       listLoading: true,
       listQuery: {
         pageNumber: 1,
-        pageSize: 20,
+        pageSize: 10,
         name: null,
         status: null,
         positionId: null,
@@ -160,7 +165,7 @@ export default {
     resetList() {
       this.listQuery = {
         pageNumber: 1,
-        pageSize: 20,
+        pageSize: 10,
         username: null,
         phone: null,
         type: null,

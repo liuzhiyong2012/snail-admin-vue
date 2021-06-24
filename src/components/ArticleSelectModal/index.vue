@@ -1,7 +1,7 @@
 
 <template>
   <section class="article-select-modal-ctn">
-    <el-dialog :title="'选择广告'" :visible.sync="isShowed">
+    <el-dialog :title="'选择广告'" :visible.sync="isshowed">
       <div class="filter-container">
         <el-input v-model="listQuery.title" placeholder="名称" style="width: 200px;" class="search-item filter-item" />
 
@@ -12,15 +12,9 @@
       </div>
 
       <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" @row-click="singleElection">
-        <el-table-column label="" width="65">
-          <template slot-scope="scope">
-            <el-radio v-model="selectId" class="radio" :label="scope.$index">&nbsp;</el-radio>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="ID" prop="id" align="center" width="200">
-          <template slot-scope="{ row }">
-            <span>{{ row.id }}</span>
+        <el-table-column label="" width="65" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">
+          <template slot-scope="{row}">
+            <el-radio v-model="selectId" class="radio" :label="row.id" :value="row.id" />
           </template>
         </el-table-column>
 
@@ -30,29 +24,23 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="内容" prop="code" align="center">
-          <template slot-scope="{ row }">
-            <span>{{ row.content||'--' }}</span>
-          </template>
-        </el-table-column>
-
         <el-table-column label="摘要" prop="code" align="center">
           <template slot-scope="{ row }">
             <span>{{ row.summary||'--' }}</span>
           </template>
         </el-table-column>
 
-        <el-table-column label="类型值" prop="type" align="center">
+        <el-table-column label="发布时间" prop="code" align="center">
           <template slot-scope="{ row }">
-            <span>{{ row.status||'--' }}</span>
+            <span>{{ row.publishTime||'--' }}</span>
           </template>
         </el-table-column>
 
-        <el-table-column label="状态" class-name="status-col">
+        <!-- <el-table-column label="状态" class-name="status-col">
           <template slot-scope="{ row }">
             <el-tag :type="row.status | statusStyleFilter">{{ row.status | statusFilter }}</el-tag>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
 
       <pagination v-show="total > 0" :total="total" :page.sync="listQuery.pageNumber" :limit.sync="listQuery.pageSize" @pagination="getList" />
@@ -68,9 +56,8 @@
 </template>
 
 <script>
-/* import waves from '@/directive/waves' */ // waves directive
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-// import SettingApi from '../../api/setting'
+
+import Pagination from '@/components/Pagination'
 import ArticleApi from '../../api/article'
 
 export default {
@@ -94,7 +81,7 @@ export default {
     }
   },
   props: {
-    isShowed: {
+    isshowed: {
       type: Boolean,
       default() {
         return false
@@ -139,7 +126,8 @@ export default {
         status: [{ required: true, message: '状态是必须的', trigger: 'change' }]
       },
       downloadLoading: false,
-      firstTypeId: '1405407770443837442'
+      selectRow: null
+
     }
   },
   created() {
@@ -148,13 +136,14 @@ export default {
   },
   methods: {
     confirm() {
-      this.$emit('confirm', this.selectId)
+      this.$emit('confirm', this.selectRow)
     },
     cancle() {
       this.$emit('cancle')
     },
     singleElection(row) {
       this.selectId = row.id
+      this.selectRow = row
     },
     resetList() {
       this.listQuery = {

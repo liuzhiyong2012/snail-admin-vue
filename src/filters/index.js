@@ -1,4 +1,5 @@
 // import parseTime, formatTime and set to filter
+import Vue from 'vue'
 export { parseTime, formatTime } from '@/utils'
 
 /**
@@ -65,4 +66,23 @@ export function toThousandFilter(num) {
  */
 export function uppercaseFirst(string) {
   return string.charAt(0).toUpperCase() + string.slice(1)
+}
+
+export function addBaseUrl(url) {
+  // debugger;
+  if (!url) return url
+  if (url.indexOf('https://') < 0 && url.indexOf('http://') < 0 && url.indexOf('data:image') < 0) {
+    const baseUrl = process.env.VUE_APP_IMAGE_URL
+    url = `${baseUrl}/${url}`
+  }
+  return url
+}
+
+export function delBaseUrl(url) {
+  if (!url) return url
+  const baseUrl = process.env.VUE_APP_IMAGE_URL + '/'
+
+  const arr = url.split(baseUrl)
+
+  return arr[0] || arr[1]
 }

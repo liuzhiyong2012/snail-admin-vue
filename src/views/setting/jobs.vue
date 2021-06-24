@@ -1,69 +1,70 @@
 <template>
   <div class="front-user-list-ctn app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="search-item filter-item" />
+      <el-input v-model="listQuery.jobName" placeholder="名称" style="width: 200px;" class="search-item filter-item" />
 
-      <el-input v-model="listQuery.phone" placeholder="手机号" style="width: 200px;" class="search-item filter-item" />
-
-      <el-input v-model="listQuery.email" placeholder="邮箱" style="width: 200px;" class="search-item filter-item" />
-
-      <el-select v-model="listQuery.roleType" placeholder="用户类型" clearable style="width: 90px" class="search-item filter-item">
-        <el-option :key="''" :label="'全部'" :value="''" />
-        <el-option v-for="(item, index) in roleTypeList" :key="index" :label="item.name" :value="item.value" />
-      </el-select>
+      <el-option :key="''" :label="'全部'" :value="''" />
+      <el-option v-for="(item, index) in statusList" :key="index" :label="item.name" :value="item.value" />
 
       <el-button v-waves class="search-item filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
 
       <el-button v-waves class="search-item filter-item" type="info" icon="el-icon-setting" style="margin-left: 0px" @click="resetList">重置</el-button>
+
+      <el-button class="search-item filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+        新增
+      </el-button>
     </div>
 
     <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;">
-      <!-- <el-table-column label="ID" prop="id" align="center">
+      <el-table-column label="任务名" prop="name" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.id }}</span>
-        </template>
-      </el-table-column> -->
-
-      <el-table-column label="用户名" prop="username" align="center">
-        <template slot-scope="{ row }">
-          <span>{{ row.username||'--' }}</span>
+          <span>{{ row.jobName||'--' }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="密码" prop="password" align="center">
+      <el-table-column label="任务分组" prop="code" align="center">
         <template slot-scope="{ row }">
-          <span>{{ '**********'||row.password }}</span>
+          <span>{{ row.jobGroup||'--' }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="手机号" prop="phone" align="center">
+      <el-table-column label="调用目标字符串" prop="code" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.phone||'--' }}</span>
+          <span>{{ row.invokeTarget||'--' }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="邮箱" prop="email" align="center">
+      <el-table-column label="执行表达是" prop="param" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.email||'--' }}</span>
+          <span>{{ row.cronExpression||'--' }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="用户类型" class-name="status-col">
+
+
+      <el-table-column label="创建时间" class-name="status-col">
         <template slot-scope="{ row }">
-          <el-tag :type="row.roleType | roleTypeStyleFilter">{{ row.roleType | roleTypeFilter }}</el-tag>
+           <span>{{ row.createdTime||'--' }}</span>
+
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" class-name="status-col">
+        <template slot-scope="{ row }">
+           <span>{{ row.remark||'--' }}</span>
+
+        </template>
+      </el-table-column>
+      <el-table-column label="任务状态" prop="type" align="center">
+        <template slot-scope="{ row }">
+           <el-tag :type="row.status | statusStyleFilter">{{ row.status | statusFilter }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" class-name="status-col">
-        <template slot-scope="{ row }">
-          <el-tag :type="row.status | statusStyleFilter">{{ row.status | statusFilter }}</el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="330" class-name="small-padding fixed-width">
         <template slot-scope="{ row, $index }">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(row, $index)">删除</el-button>
+
         </template>
       </el-table-column>
     </el-table>
@@ -71,65 +72,59 @@
     <pagination v-show="total > 0" :total="total" :page.sync="listQuery.pageNumber" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="用户名" prop="username"><el-input v-model="temp.username" /></el-form-item>
-        <el-form-item label="手机号" prop="phone"><el-input v-model="temp.phone" /></el-form-item>
-        <el-form-item label="邮箱" prop="email"><el-input v-model="temp.email" /></el-form-item>
+        <el-form-item label="名称" prop="jobName"><el-input v-model="temp.jobName" /></el-form-item>
+        <el-form-item label="分组">
+          <el-select v-model="temp.jobGroup" class="filter-item" placeholder="请选择">
+            <el-option v-for="item in groupList" :key="item" :label="item.name" :value="item.value" />
+          </el-select>
+        </el-form-item>
 
-        <el-form-item label="用户类型">
-          <el-select v-model="temp.roleType" class="filter-item" placeholder="请选择">
-            <el-option v-for="(item,index) in roleTypeList" :key="index" :label="item.name" :value="item.value" />
+       <!-- id:'',
+        jobName:'',
+        jobGroup:'',
+        invokeTarget:'',
+        cronExpression:'',
+        status:'', -->
+
+        <el-form-item label="调用目标字符串" prop="invokeTarget"><el-input v-model="temp.invokeTarget" /></el-form-item>
+        <!-- <el-form-item label="描述" prop="desc"><el-input v-model="temp.desc" /></el-form-item> -->
+        <el-form-item label="cron表达式" prop="cronExpression"><el-input v-model="temp.cronExpression" /></el-form-item>
+
+        <el-form-item label="执行策略">
+          <el-select v-model="temp.misfirePolicy" class="filter-item" placeholder="请选择">
+            <el-option v-for="item in misfirePolicyList" :key="item" :label="item.name" :value="item.value" />
           </el-select>
         </el-form-item>
 
         <el-form-item label="状态">
           <el-select v-model="temp.status" class="filter-item" placeholder="请选择">
-            <el-option v-for="(item,index) in statusList" :key="index" :label="item.name" :value="item.value" />
+            <el-option v-for="item in statusList" :key="item" :label="item.name" :value="item.value" />
           </el-select>
         </el-form-item>
+        <el-form-item label="描述" prop="remark"><el-input v-model="temp.remark" /></el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
         <el-button type="primary" @click="dialogStatus === 'create' ? createData() : updateData()">确定</el-button>
       </div>
     </el-dialog>
-
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer"><el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button></span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-import FrontUserApi from '../../api/front-user'
+import SettingApi from '../../api/setting'
+import JobsApi from '../../api/jobs';
 
 export default {
   name: 'FrontUserList',
   components: { Pagination },
   directives: { waves },
   filters: {
-    roleTypeFilter(roleType) {
-      const roleTypeMap = {
-        '1': '普通用户',
-        '2': '会员用户'
-      }
-      return roleTypeMap[roleType]
-    },
-    roleTypeStyleFilter(roleType) {
-      const roleTypeMap = {
-        '1': 'success',
-        '2': 'info'
-      }
-      return roleTypeMap[roleType]
-    },
     statusFilter(roleType) {
       const statusMap = {
         '1': '启用',
@@ -153,30 +148,35 @@ export default {
       listLoading: true,
       listQuery: {
         pageNumber: 1,
-        pageSize: 20,
-        username: null,
-        phone: null,
-        type: null,
-        status: null
+        pageSize: 10,
+        id:'',
+        jobName:'',
+        jobGroup:'',
+        invokeTarget:'',
+        cronExpression:'',
+        status:'',
       },
-      roleTypeList: [
-        { name: '普通用户', value: '1' },
-        { name: '会员用户', value: '2' }
-      ],
       statusList: [
         { name: '启用', value: '1' },
         { name: '冻结', value: '2' }
       ],
 
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
-      showReviewer: false,
+      groupList: [
+        { name: '默认', value: 'DEFAULT' },
+        { name: '系统', value: 'SYSTEM' }
+      ],
+      misfirePolicyList:[
+        { name: '立即执行', value: '1' },
+        { name: '执行一次', value: '2' },
+        { name: '放弃执行', value: '3' }
+      ],
       temp: {
         id: null,
-        username: null,
-        phone: null,
-        type: null,
-        status: null
+        jobName:'',
+        jobGroup:'',
+        invokeTarget:'',
+        cronExpression:'',
+        status:'',
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -184,10 +184,10 @@ export default {
         update: '编辑',
         create: '新增'
       },
-      dialogPvVisible: false,
-      pvData: [],
       rules: {
-        username: [{ required: true, message: '用户名是必须的', trigger: 'change' }]
+        jobName: [{ required: true, message: '类型名称是必须的', trigger: 'change' }],
+        invokeTarget: [{ required: true, message: '值是必须的', trigger: 'change' }],
+        cronExpression: [{ required: true, message: '状态是必须的', trigger: 'change' }]
       },
       downloadLoading: false
     }
@@ -199,17 +199,18 @@ export default {
     resetList() {
       this.listQuery = {
         pageNumber: 1,
-        pageSize: 20,
-        username: null,
-        phone: null,
-        type: null,
-        status: null
+        pageSize: 10,
+        jobName:'',
+        jobGroup:'',
+        invokeTarget:'',
+        cronExpression:'',
+        status:'',
       }
       this.getList()
     },
     getList() {
       this.listLoading = true
-      FrontUserApi.getFrontUserList(this.listQuery).then(response => {
+      JobsApi.getJobs(this.listQuery).then(response => {
         this.list = response.datas
         this.total = response.total
         this.listLoading = false
@@ -222,10 +223,11 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        username: null,
-        phone: null,
-        type: null,
-        status: null
+        jobName:'',
+        jobGroup:'',
+        invokeTarget:'',
+        cronExpression:'',
+        status:'',
       }
     },
     handleCreate() {
@@ -239,7 +241,21 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          const tempData = Object.assign({}, this.temp)
 
+          this.listLoading = true
+          tempData.parentId = null
+
+          JobsApi.insertJobs(tempData).then(response => {
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '成功新增一条记录',
+              type: 'success',
+              duration: 2000
+            })
+            this.resetList()
+          })
         }
       })
     },
@@ -256,9 +272,9 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-
           this.listLoading = true
-          FrontUserApi.updateFrontUser(tempData).then(response => {
+
+          JobsApi.updateJobs(tempData).then(response => {
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
@@ -273,7 +289,7 @@ export default {
     },
     handleDelete(row, index) {
       this.listLoading = true
-      FrontUserApi.deleteById(row).then(response => {
+      JobsApi.deleteJobs(row).then(response => {
         this.$notify({
           title: '成功',
           message: '成功删除一条记录',
@@ -282,20 +298,9 @@ export default {
         })
         this.resetList()
       })
-    },
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
-      }))
-    },
-    getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
     }
+
+
   }
 }
 </script>

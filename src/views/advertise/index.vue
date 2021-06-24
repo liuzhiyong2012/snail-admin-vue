@@ -36,6 +36,11 @@
           <span>{{ row.name||'--' }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="封面图" prop="imageUrl" align="center">
+        <template slot-scope="{ row }">
+          <img :src="row.imageUrl|addBaseUrl" alt="" style="max-width: 200px;max-height: 100px;">
+        </template>
+      </el-table-column>
 
       <el-table-column label="广告类型" class-name="status-col">
         <template slot-scope="{ row }">
@@ -75,38 +80,6 @@
 
     <pagination v-show="total > 0" :total="total" :page.sync="listQuery.pageNumber" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-
-        <el-form-item label="用户名" prop="username"><el-input v-model="temp.username" /></el-form-item>
-        <el-form-item label="手机号" prop="phone"><el-input v-model="temp.phone" /></el-form-item>
-        <el-form-item label="邮箱" prop="email"><el-input v-model="temp.email" /></el-form-item>
-
-        <el-form-item label="用户类型">
-          <el-select v-model="temp.roleType" class="filter-item" placeholder="请选择">
-            <el-option v-for="item in roleTypeList" :key="item" :label="item.name" :value="item.value" />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="状态">
-          <el-select v-model="temp.status" class="filter-item" placeholder="请选择">
-            <el-option v-for="item in statusList" :key="item" :label="item.name" :value="item.value" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogStatus === 'create' ? createData() : updateData()">确定</el-button>
-      </div>
-    </el-dialog>
-
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer"><el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button></span>
-    </el-dialog>
   </div>
 </template>
 
@@ -114,7 +87,6 @@
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-import FrontUserApi from '../../api/front-user'
 import AdvertiseApi from '../../api/advertise'
 import TypeApi from '../../api/type'
 
