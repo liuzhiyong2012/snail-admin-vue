@@ -144,6 +144,7 @@ export default {
     singleElection(row) {
       this.selectId = row.id
       this.selectRow = row
+      this.$emit('confirm', this.selectRow)
     },
     resetList() {
       this.listQuery = {

@@ -12,7 +12,7 @@
         :on-success="handleSuccess"
         :before-upload="beforeUpload"
         class="editor-slide-upload"
-        action="https://httpbin.org/post"
+        :action="imageUploadUrl"
         list-type="picture-card"
       >
         <el-button size="small" type="primary">
@@ -42,12 +42,24 @@ export default {
   },
   data() {
     return {
+      imageUploadUrl: process.env.VUE_APP_API_URL + '/common/upload',
       dialogVisible: false,
       listObj: {},
       fileList: []
     }
   },
   methods: {
+    addBaseUrl(url) {
+      // debugger
+      // debugger;
+      if (!url) return url
+      if (url.indexOf('https://') < 0 && url.indexOf('http://') < 0 && url.indexOf('data:image') < 0) {
+        // debugger
+        const baseUrl = process.env.VUE_APP_IMAGE_URL
+        url = `${baseUrl}/${url}`
+      }
+      return url
+    },
     checkAllSuccess() {
       return Object.keys(this.listObj).every(item => this.listObj[item].hasSuccess)
     },
@@ -67,7 +79,7 @@ export default {
       const objKeyArr = Object.keys(this.listObj)
       for (let i = 0, len = objKeyArr.length; i < len; i++) {
         if (this.listObj[objKeyArr[i]].uid === uid) {
-          this.listObj[objKeyArr[i]].url = response.files.file
+          this.listObj[objKeyArr[i]].url = this.addBaseUrl(response.datas.fileId)
           this.listObj[objKeyArr[i]].hasSuccess = true
           return
         }

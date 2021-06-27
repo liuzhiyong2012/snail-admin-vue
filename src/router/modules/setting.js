@@ -39,7 +39,7 @@ const tableRouter = {
       path: 'contractus',
       component: () => import('@/views/setting/contractus'),
       name: 'Contractus',
-      meta: { title: '联系我们' }
+      meta: { title: '申请会员' }
     },
     {
       path: 'clause',

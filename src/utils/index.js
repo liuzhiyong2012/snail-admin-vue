@@ -2,6 +2,17 @@
  * Created by PanJiaChen on 16/11/18.
  */
 
+export function addBaseUrl(url) {
+  // debugger
+  // debugger;
+  if (!url) return url
+  if (url.indexOf('https://') < 0 && url.indexOf('http://') < 0 && url.indexOf('data:image') < 0) {
+    // debugger
+    const baseUrl = process.env.VUE_APP_IMAGE_URL
+    url = `${baseUrl}/${url}`
+  }
+  return url
+}
 /**
  * Parse the time to string
  * @param {(Object|string|number)} time

@@ -8,8 +8,10 @@
           <el-input v-model="postForm.logoText" placeholder="请输入网站logo文字" style="width: 200px" />
         </el-form-item>
 
-        <el-form-item label="网站主题色" prop="primaryColor">
-          <el-input v-model="postForm.primaryColor" placeholder="请输入网站主题色" style="width: 200px" />
+        <el-form-item label="网站主题色" prop="region">
+          <el-select v-model="postForm.primaryColor" placeholder="网站主题色" clearable style="width: 200px" class="search-item filter-item">
+            <el-option v-for="(item, index) in primaryColorList" :key="index" :label="item.name" :value="item.value" />
+          </el-select>
         </el-form-item>
 
         <el-form-item label="搜索关键词" prop="keywords">
@@ -64,6 +66,14 @@ export default {
         nameHolder: '请输入敏感词',
         valueHolder: ''
       },
+      primaryColorList: [
+        { name: '默认主题色(#6466ff)', value: 'theme-blue' },
+        { name: '黄色主题色(#ffff00)', value: 'theme-yellow' },
+        { name: '红色主题色(#ff0033)', value: 'theme-red' },
+        { name: '紫色主题色(#6600ff)', value: 'theme-purple' },
+        /* { name: '白主题色(#ffffff)', value: 'theme-white' }, */
+        { name: '黑色主题色(#333333)', value: 'theme-black' }
+      ],
       postForm: {
         logoText: '',
         keywords: [],

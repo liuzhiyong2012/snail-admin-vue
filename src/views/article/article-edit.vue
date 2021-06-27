@@ -99,7 +99,7 @@ export default {
     return {
       id: null,
       articleName: null,
-      imgUploadUrl: 'http://127.0.0.1:9080/common/upload',
+      imgUploadUrl: process.env.VUE_APP_API_URL + '/common/upload',
       firstTypeList: [],
       secondTypeList: [],
       statusList: [{ name: '启用', value: '1' }, { name: '冻结', value: '2' }],

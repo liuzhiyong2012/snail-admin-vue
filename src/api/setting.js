@@ -42,6 +42,13 @@ export default {
       method: 'post',
       data: params
     })
+  },
+  login(params) {
+    return request({
+      url: process.env.VUE_APP_API_PREFIX + '/admin/login',
+      method: 'post',
+      data: params
+    })
   }
-
 }
+

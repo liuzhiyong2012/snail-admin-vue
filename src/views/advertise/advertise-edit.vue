@@ -88,7 +88,7 @@ export default {
   },
   data() {
     return {
-      imgUploadUrl: 'http://127.0.0.1:9080/common/upload',
+      imgUploadUrl: process.env.VUE_APP_API_URL + '/common/upload',
       statusList: [{ name: '启用', value: '1' }, { name: '冻结', value: '2' }],
       opertype: 'add',
       operTxt: {
@@ -110,7 +110,7 @@ export default {
       },
       articleTitle: '',
       rules: {
-        name: [{ required: true, message: '请输入广告名', trigger: 'blur' }, { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }],
+        name: [{ required: true, message: '请输入广告名', trigger: 'blur' }, { min: 1, max: 20, message: '长度在 3 到 5 个字符', trigger: 'blur' }],
         startTime: [{ required: true, message: '请输入开始时间', trigger: 'blur' }],
         endTime: [{ required: true, message: '请输入结束时间', trigger: 'blur' }],
         positionId: [{ required: true, message: '请选择广告位置', trigger: 'blur' }]
