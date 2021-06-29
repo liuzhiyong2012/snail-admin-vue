@@ -24,7 +24,14 @@ const tableRouter = {
       name: 'AdvertiseEdit',
       meta: { title: '编辑广告' },
       hidden: true
-    }
+    },
+	{
+	  path: 'position',
+	  component: () => import('@/views/advertise/advertise-position'),
+	  name: 'AdvertisePosition',
+	  meta: { title: '位置管理' },
+
+	}
 
   ]
 }

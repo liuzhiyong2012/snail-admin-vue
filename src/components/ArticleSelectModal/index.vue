@@ -1,7 +1,7 @@
 
 <template>
   <section class="article-select-modal-ctn">
-    <el-dialog :title="'选择广告'" :visible.sync="isshowed">
+    <el-dialog :title="'选择贴子'" :visible.sync="isshowed">
       <div class="filter-container">
         <el-input v-model="listQuery.title" placeholder="名称" style="width: 200px;" class="search-item filter-item" />
 
@@ -27,6 +27,14 @@
         <el-table-column label="摘要" prop="code" align="center">
           <template slot-scope="{ row }">
             <span>{{ row.summary||'--' }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="状态" prop="title" align="center">
+          <template slot-scope="{ row }">
+            <span v-if="row.status == '1'">审核中</span>
+            <span v-if="row.status == '2'">已通过</span>
+            <span v-if="row.status == '3'">已拒绝</span>
           </template>
         </el-table-column>
 

@@ -1,9 +1,10 @@
 <template>
   <div class="front-user-list-ctn app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="search-item filter-item" />
 
       <el-input v-model="listQuery.phone" placeholder="手机号" style="width: 200px;" class="search-item filter-item" />
+
+      <el-input v-model="listQuery.name" placeholder="昵称" style="width: 200px;" class="search-item filter-item" />
 
       <el-input v-model="listQuery.email" placeholder="邮箱" style="width: 200px;" class="search-item filter-item" />
 
@@ -24,21 +25,21 @@
         </template>
       </el-table-column> -->
 
-      <el-table-column label="用户名" prop="username" align="center">
+      <el-table-column label="手机号" prop="phone" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.username||'--' }}</span>
+          <span>{{ row.phone||'--' }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="昵称" prop="name" align="center">
+        <template slot-scope="{ row }">
+          <span>{{ row.name||'--' }}</span>
         </template>
       </el-table-column>
 
       <el-table-column label="密码" prop="password" align="center">
         <template slot-scope="{ row }">
           <span>{{ '**********'||row.password }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="手机号" prop="phone" align="center">
-        <template slot-scope="{ row }">
-          <span>{{ row.phone||'--' }}</span>
         </template>
       </el-table-column>
 
@@ -73,7 +74,7 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="用户名" prop="username"><el-input v-model="temp.username" /></el-form-item>
+        <el-form-item label="用户名" prop="name"><el-input v-model="temp.name" /></el-form-item>
         <el-form-item label="手机号" prop="phone"><el-input v-model="temp.phone" /></el-form-item>
         <el-form-item label="邮箱" prop="email"><el-input v-model="temp.email" /></el-form-item>
 
@@ -154,7 +155,7 @@ export default {
       listQuery: {
         pageNumber: 1,
         pageSize: 20,
-        username: null,
+        name: null,
         phone: null,
         type: null,
         status: null
@@ -173,7 +174,7 @@ export default {
       showReviewer: false,
       temp: {
         id: null,
-        username: null,
+        name: null,
         phone: null,
         type: null,
         status: null
@@ -187,7 +188,7 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        username: [{ required: true, message: '用户名是必须的', trigger: 'change' }]
+        name: [{ required: true, message: '用户名是必须的', trigger: 'change' }]
       },
       downloadLoading: false
     }
@@ -200,7 +201,7 @@ export default {
       this.listQuery = {
         pageNumber: 1,
         pageSize: 20,
-        username: null,
+        name: null,
         phone: null,
         type: null,
         status: null
@@ -222,7 +223,7 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        username: null,
+        name: null,
         phone: null,
         type: null,
         status: null

@@ -14,6 +14,10 @@
           </el-select>
         </el-form-item>
 
+        <el-form-item label="底部免责声明" prop="logoText">
+          <el-input v-model="postForm.warningText" type="textarea" placeholder="底部免责声明" style="width: 400px;height: auto;" />
+        </el-form-item>
+
         <el-form-item label="搜索关键词" prop="keywords">
           <multi-field v-model="postForm.keywords" :conf="keywordsConf" />
         </el-form-item>
@@ -110,7 +114,7 @@ export default {
       setting.keywords = setting.keywords ? JSON.stringify(setting.keywords) : ''
       setting.sensitiveWords = setting.sensitiveWords ? JSON.stringify(setting.sensitiveWords) : ''
       setting.friendLinks = setting.friendLinks ? JSON.stringify(setting.friendLinks) : ''
-      debugger
+
       SettingApi.updateSetting(setting).then((res) => {
         this.$notify({
           title: '修改成功',

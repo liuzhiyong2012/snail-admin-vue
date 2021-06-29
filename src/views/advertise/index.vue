@@ -3,10 +3,10 @@
     <div class="filter-container">
       <el-input v-model="listQuery.name" placeholder="广告名" style="width: 200px;" class="search-item filter-item" />
 
-      <el-select v-model="listQuery.type" placeholder="广告类型" clearable style="width: 120px" class="search-item filter-item">
+      <!-- <el-select v-model="listQuery.type" placeholder="广告类型" clearable style="width: 120px" class="search-item filter-item">
         <el-option :key="''" :label="'全部'" :value="''" />
         <el-option v-for="(item, index) in typeList" :key="index" :label="item.name" :value="item.value" />
-      </el-select>
+      </el-select> -->
 
       <el-date-picker v-model="listQuery.startTime" type="datetime" format="yyyy-MM-dd HH:mm" value-format="yyyy-MM-dd HH:mm:ss" placeholder="开始时间" style="width: 200px;vertical-align: top;" />
       <el-date-picker v-model="listQuery.endTime" type="datetime" format="yyyy-MM-dd HH:mm" value-format="yyyy-MM-dd HH:mm:ss" placeholder="结束时间" style="width: 200px;vertical-align: top;" />
@@ -42,11 +42,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="广告类型" class-name="status-col">
+      <!-- <el-table-column label="广告类型" class-name="status-col">
         <template slot-scope="{ row }">
           {{ row.type | typeFilter }}
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column label="位置" class-name="status-col">
         <template slot-scope="{ row }">
@@ -89,6 +89,7 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import AdvertiseApi from '../../api/advertise'
 import TypeApi from '../../api/type'
+import AdvertisePositionApi from '../../api/advertise-position.js'
 
 export default {
   name: 'AdvertiseList',
@@ -178,8 +179,8 @@ export default {
   },
   methods: {
     getPositionList() {
-      TypeApi.getType({
-        parentId: '1406277910093938689',
+      AdvertisePositionApi.getAdvertisePosition({
+        status: '1',
         pageNumber: 1,
         pageSize: 1000
       }).then((res) => {

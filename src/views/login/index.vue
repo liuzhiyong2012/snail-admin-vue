@@ -52,14 +52,15 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-import SocialSign from './components/SocialSignin'
+
 import SettingApi from '../../api/setting'
 import md5 from 'blueimp-md5'
 import store from '../../store'
+import { getToken, setToken, removeToken } from '@/utils/auth'
 
 export default {
   name: 'Login',
-  components: { SocialSign },
+  components: { },
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
@@ -138,28 +139,28 @@ export default {
         if (valid) {
           this.loading = true
 
-          /* SettingApi.login({
+          SettingApi.login({
             username: this.loginForm.username,
             password: md5(this.loginForm.password)
           }).then((res) => {
-
-            store.commit('SET_TOKEN', res.datas.token)
+            store.commit('user/SET_TOKEN', res.datas.token)
+            setToken(res.datas.token)
             THIS.$router.push({
               path: '/article/list'
             })
             this.loading = false
           }).catch(() => {
             this.loading = false
-          }) */
+          })
 
-          this.$store.dispatch('user/login', this.loginForm)
+          /* this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
               this.$router.push({ path: '/user/manage' || this.redirect || '/', query: this.otherQuery })
               this.loading = false
             })
             .catch(() => {
               this.loading = false
-            })
+            }) */
         } else {
           console.log('error submit!!')
           return false

@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-input v-model="listQuery.name" placeholder="名称" style="width: 200px;" class="search-item filter-item" />
 
-      <el-input v-model="listQuery.code" placeholder="值" style="width: 200px;" class="search-item filter-item" />
+      <el-input v-model="listQuery.code" placeholder="英文或拼音" style="width: 200px;" class="search-item filter-item" />
 
       <el-button v-waves class="search-item filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
 
@@ -15,19 +15,19 @@
     </div>
 
     <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;">
-      <el-table-column label="ID" prop="id" align="center">
-        <template slot-scope="{ row }">
-          <span>{{ row.id }}</span>
-        </template>
-      </el-table-column>
-
       <el-table-column label="名称" prop="name" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.name||'--' }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="值" prop="code" align="center">
+      <el-table-column label="排序权重" prop="orderNumber" align="center">
+        <template slot-scope="{ row }">
+          <span>{{ row.orderNumber||'--' }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="英文或拼音" prop="code" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.code||'--' }}</span>
         </template>
@@ -39,7 +39,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="参数值" prop="param" align="center">
+      <!-- <el-table-column label="参数值" prop="param" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.param||'--' }}</span>
         </template>
@@ -49,7 +49,7 @@
         <template slot-scope="{ row }">
           <span>{{ row.type||'--' }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column label="状态" class-name="status-col">
         <template slot-scope="{ row }">
@@ -60,7 +60,7 @@
       <el-table-column label="操作" align="center" width="330" class-name="small-padding fixed-width">
         <template slot-scope="{ row, $index }">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(row, $index)">删除</el-button>
+          <el-button v-if="(row.code!='shop')&&(row.code!='information')" size="mini" type="danger" @click="handleDelete(row, $index)">删除</el-button>
           <el-button type="primary" size="mini" @click="handleSecond(row)">添加下级分类</el-button>
         </template>
       </el-table-column>
@@ -69,13 +69,17 @@
     <pagination v-show="total > 0" :total="total" :page.sync="listQuery.pageNumber" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
 
         <el-form-item label="名称" prop="name"><el-input v-model="temp.name" /></el-form-item>
-        <el-form-item label="值" prop="code"><el-input v-model="temp.code" /></el-form-item>
+        <el-form-item label="排序权重" prop="orderNumber"><el-input v-model="temp.orderNumber" /></el-form-item>
+        <el-form-item label="英文或拼音" prop="code">
+
+          <el-input v-model="temp.code" placeholder="用于程序检索" :disabled="((temp.code=='shop')||(temp.code=='information'))&&dialogStatus == 'update'" />
+        </el-form-item>
         <!-- <el-form-item label="描述" prop="desc"><el-input v-model="temp.desc" /></el-form-item> -->
-        <el-form-item label="参数值" prop="param"><el-input v-model="temp.param" /></el-form-item>
-        <el-form-item label="类型值" prop="type"><el-input v-model="temp.type" /></el-form-item>
+        <!-- <el-form-item label="参数值" prop="param"><el-input v-model="temp.param" /></el-form-item>
+        <el-form-item label="类型值" prop="type"><el-input v-model="temp.type" /></el-form-item> -->
         <el-form-item label="描述" prop="desc"><el-input v-model="temp.desc" /></el-form-item>
 
         <el-form-item label="状态">
@@ -128,6 +132,7 @@ export default {
         pageNumber: 1,
         pageSize: 10,
         name: null,
+        orderNumber: '',
         code: null,
         param: null,
         type: null,
@@ -142,6 +147,7 @@ export default {
       temp: {
         id: null,
         name: null,
+        orderNumber: '',
         code: null,
         param: null,
         type: null,
@@ -172,6 +178,7 @@ export default {
         pageNumber: 1,
         pageSize: 10,
         name: null,
+        orderNumber: '',
         code: null,
         param: null,
         type: null,
@@ -197,9 +204,12 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        username: null,
-        phone: null,
+        name: null,
+        orderNumber: '',
+        code: null,
+        param: null,
         type: null,
+        desc: null,
         status: null,
         level: '1',
         parentId: null
@@ -282,7 +292,6 @@ export default {
         }
       })
     }
-
   }
 }
 </script>

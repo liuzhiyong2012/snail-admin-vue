@@ -27,6 +27,12 @@
         </template>
       </el-table-column>
 
+      <el-table-column label="排序权重" prop="orderNumber" align="center">
+        <template slot-scope="{ row }">
+          <span>{{ row.orderNumber||'--' }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column label="值" prop="code" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.code||'--' }}</span>
@@ -39,7 +45,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="参数" prop="code" align="center">
+      <!-- <el-table-column label="参数" prop="code" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.param||'--' }}</span>
         </template>
@@ -48,7 +54,7 @@
         <template slot-scope="{ row }">
           <span>{{ row.type||'--' }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <!-- param: null,
       type: null, -->
@@ -73,10 +79,11 @@
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
         <el-form-item label="名称" prop="name"><el-input v-model="temp.name" /></el-form-item>
+        <el-form-item label="排序权重" prop="orderNumber"><el-input v-model="temp.orderNumber" /></el-form-item>
         <el-form-item label="值" prop="code"><el-input v-model="temp.code" /></el-form-item>
         <el-form-item label="描述" prop="desc"><el-input v-model="temp.desc" /></el-form-item>
-        <el-form-item label="参数" prop="param"><el-input v-model="temp.param" /></el-form-item>
-        <el-form-item label="类型值" prop="type"><el-input v-model="temp.type" /></el-form-item>
+        <!--  <el-form-item label="参数" prop="param"><el-input v-model="temp.param" /></el-form-item>
+        <el-form-item label="类型值" prop="type"><el-input v-model="temp.type" /></el-form-item> -->
 
         <el-form-item label="状态">
           <el-select v-model="temp.status" class="filter-item" placeholder="请选择">
@@ -131,6 +138,7 @@ export default {
         name: null,
         code: null,
         desc: null,
+        orderNumber: null,
         parentId: null,
         param: null,
         type: null,
@@ -147,6 +155,7 @@ export default {
         code: null,
         parentId: null,
         desc: null,
+        orderNumber: null,
         param: null,
         type: null,
         status: null,
@@ -175,6 +184,7 @@ export default {
         pageNumber: 1,
         pageSize: 10,
         name: null,
+        orderNumber: null,
         code: null,
         desc: null,
         param: null,

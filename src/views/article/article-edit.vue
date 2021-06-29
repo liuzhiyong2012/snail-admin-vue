@@ -48,7 +48,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="发帖方式" prop="type">
+        <!-- <el-form-item label="发帖方式" prop="type">
           <el-radio-group v-model="postForm.type">
             <el-radio label="1">文本内容</el-radio>
             <el-radio label="2">关联贴子</el-radio>
@@ -56,11 +56,11 @@
             <el-radio label="3">外部链接</el-radio>
 
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
 
         <div v-if="postForm.type == '1'" class="custom-ctn">
           <el-form-item label="文本内容" prop="content">
-            <Tinymce ref="editor" v-model="postForm.content" :height="400" /></el-form-item></div>
+            <Tinymce ref="editor" v-model="postForm.content" :height="500" /></el-form-item></div>
         </el-form-item>
         <el-form-item v-if="postForm.type == '2'" label="关联贴子" prop="type">
           <el-col :span="20">
@@ -102,7 +102,11 @@ export default {
       imgUploadUrl: process.env.VUE_APP_API_URL + '/common/upload',
       firstTypeList: [],
       secondTypeList: [],
-      statusList: [{ name: '启用', value: '1' }, { name: '冻结', value: '2' }],
+      statusList: [
+        { name: '审核中', value: '1' },
+        { name: '已通过', value: '2' },
+        { name: '已拒绝', value: '3' }
+      ],
       opertype: 'add', // 'add'||'edit'
       operTxt: {
         'add': '新增',

@@ -1,10 +1,10 @@
 <template>
   <div class="platform-ctn">
     <h6 class="header-ctn">
-      平台介绍
+      联系我们
     </h6>
     <div class="content-ctn">
-      <tinymce v-model="setting.content" :height="300" />
+      <tinymce v-model="setting.content" :height="500" />
     </div>
     <div class="footer-ctn">
       <el-button type="primary" @click="updateSetting()">更新</el-button>
@@ -35,7 +35,12 @@ export default {
   methods: {
     updateSetting() {
       SettingApi.updateSetting(this.setting).then((res) => {
-        // this.setting = res.datas
+        this.$notify({
+          title: '修改成功',
+          message: '修改成功',
+          type: 'success',
+          duration: 2000
+        })
       })
     }
   }
@@ -45,6 +50,7 @@ export default {
 <style scoped lang="scss">
 .platform-ctn{
   margin-top: 20px;
+  padding: 0 120px;
   .header-ctn{
     text-align: center;
     font-size: 32px;

@@ -5,9 +5,9 @@
 
       <el-input v-model="listQuery.title" placeholder="标题" style="width: 200px;" class="search-item filter-item" />
 
-      <el-select v-model="listQuery.first_type_id" placeholder="广告类型" clearable style="width: 120px" class="search-item filter-item">
+      <el-select v-model="listQuery.firstTypeId" placeholder="类型" clearable style="width: 120px" class="search-item filter-item">
         <el-option :key="''" :label="'全部'" :value="''" />
-        <el-option v-for="(item, index) in firstTypeList" :key="index" :label="item.name" :value="item.value" />
+        <el-option v-for="(item, index) in firstTypeList" :key="index" :label="item.name" :value="item.id" />
       </el-select>
 
       <el-date-picker v-model="listQuery.startTime" type="datetime" format="yyyy-MM-dd HH:mm" value-format="yyyy-MM-dd HH:mm:ss" placeholder="开始时间" style="width: 200px;vertical-align: top;" />
@@ -42,6 +42,13 @@
           <span>{{ row.username||'--' }}</span>
         </template>
       </el-table-column>
+
+      <el-table-column label="更新时间" prop="title" align="center">
+        <template slot-scope="{ row }">
+          <span>{{ row.updatedTime||row.createdTime }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column label="发布时间" prop="title" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.publishTime||'--' }}</span>
@@ -107,15 +114,17 @@ export default {
     },
     statusFilter(roleType) {
       const statusMap = {
-        '1': '启用',
-        '2': '冻结'
+        '1': '审核中',
+        '2': '已通过',
+        '3': '已拒绝'
       }
       return statusMap[roleType]
     },
     statusStyleFilter(roleType) {
       const statusMap = {
-        '1': 'success',
-        '2': 'danger'
+        '1': 'warning',
+        '2': 'success',
+        '3': 'danger'
       }
       return statusMap[roleType]
     }
@@ -129,18 +138,26 @@ export default {
       listQuery: {
         pageNumber: 1,
         pageSize: 10,
-        name: null,
+
+        username: null,
+        title: null,
+        firstTypeId: null,
         status: null,
         positionId: null,
-        type: null
+        startTime: null,
+        endTime: null
+
       },
-      firstTypeList: [],
+      firstTypeList: [
+
+      ],
       positionList: [
 
       ],
       statusList: [
-        { name: '启用', value: '1' },
-        { name: '冻结', value: '2' }
+        { name: '审核中', value: '1' },
+        { name: '已通过', value: '2' },
+        { name: '已拒绝', value: '3' }
       ],
       textMap: {
         update: '编辑',
@@ -150,16 +167,17 @@ export default {
   },
   created() {
     this.getList()
-    this.getArticleTypeList()
+    this.getFirstTypeList()
   },
   methods: {
-    getArticleTypeList() {
+    getFirstTypeList() {
+      // username title
       TypeApi.getType({
         pageSize: 1000,
         pageNumber: 1,
         type: 'menu'
       }).then((res) => {
-        this.articleTypeList = res.datas
+        this.firstTypeList = res.datas
       })
     },
     resetList() {
@@ -167,14 +185,18 @@ export default {
         pageNumber: 1,
         pageSize: 10,
         username: null,
-        phone: null,
-        type: null,
-        status: null
+        title: null,
+        firstTypeId: null,
+        status: null,
+        positionId: null,
+        startTime: null,
+        endTime: null
       }
       this.getList()
     },
     getList() {
       this.listLoading = true
+      // debuggerss
       ArticleApi.getArticle(this.listQuery).then(response => {
         this.list = response.datas
         this.total = response.total

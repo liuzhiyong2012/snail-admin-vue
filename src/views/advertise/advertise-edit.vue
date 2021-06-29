@@ -31,7 +31,7 @@
 
           <span>-</span>
 
-          <el-time-picker v-model="postForm.endTime" type="datetime" format="yyyy-MM-dd HH:mm" value-format="yyyy-MM-dd HH:mm:ss" placeholder="结束时间" style="width: 200px" />
+          <el-date-picker v-model="postForm.endTime" type="datetime" format="yyyy-MM-dd HH:mm" value-format="yyyy-MM-dd HH:mm:ss" placeholder="结束时间" style="width: 200px" />
         </el-form-item>
 
         <el-form-item label="状态" prop="status">
@@ -40,15 +40,15 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="广告类型" prop="type">
+        <!-- <el-form-item label="广告类型" prop="type">
           <el-radio-group v-model="postForm.type">
             <el-radio label="1">关联贴子</el-radio>
             <el-radio label="2">自定义编辑</el-radio>
             <el-radio label="3">外部链接</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
 
-        <el-form-item v-if="postForm.type == '1'" label="关联贴子" prop="type">
+        <el-form-item v-if="postForm.type == '2'" label="关联贴子" prop="type">
           <el-col :span="20">
             <span v-if="!postForm.articleId" class="select-btn" @click="openArticleModal()">点击此处选择需要关联的用户贴子</span>
 
@@ -59,7 +59,7 @@
           </el-col>
         </el-form-item>
 
-        <div v-if="postForm.type == '2'" class="custom-ctn">
+        <div v-if="postForm.type == '1'" class="custom-ctn">
           <el-form-item label="文本内容" prop="content">
             <Tinymce ref="editor" v-model="postForm.content" :height="400" /></el-form-item></div>
         </el-form-item>
@@ -81,6 +81,7 @@ import ArticleSelectModal from '../../components/ArticleSelectModal/index.vue'
 import Tinymce from '@/components/Tinymce'
 import TypeApi from '../../api/type'
 import AdvertiseApi from '../../api/advertise'
+import AdvertisePositionApi from '../../api/advertise-position.js'
 export default {
   components: {
     Tinymce,
@@ -102,7 +103,7 @@ export default {
         positionId: '',
         startTime: '',
         endTime: '',
-        type: '',
+        type: '2',
         articleId: '',
         content: '',
         linkUrl: '',
@@ -127,7 +128,7 @@ export default {
         positionId: '',
         startTime: '',
         endTime: '',
-        type: '1',
+        type: '2',
         articleId: '',
         content: '',
         linkUrl: '',
@@ -181,11 +182,11 @@ export default {
       return type && isLt2M
     },
     getPositionList() {
-      TypeApi.getType({
-        parentId: '1406277910093938689',
+      AdvertisePositionApi.getAdvertisePosition({
+        status: '1',
         pageNumber: 1,
         pageSize: 1000
-      }).then(res => {
+      }).then((res) => {
         this.positionList = res.datas
       })
     },
